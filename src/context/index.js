@@ -1,3 +1,9 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-use-before-define */
+/* eslint-disable react/jsx-no-constructed-context-values */
+/* eslint-disable no-shadow */
+/* eslint-disable prettier/prettier */
+/* eslint-disable no-unused-vars */
 /**
 =========================================================
 * Material Dashboard 2 React - v2.1.0
@@ -18,15 +24,42 @@ Coded by www.creative-tim.com
   you can customize the states for the different components here.
 */
 
-import { createContext, useContext, useReducer, useMemo } from "react";
+import { createContext, useContext, useReducer, useMemo, useState } from "react";
 
 // prop-types is a library for typechecking of props
 import PropTypes from "prop-types";
 
+import { localStorageHelper } from "data/useToken";
+
 // Material Dashboard 2 React main context
-const MaterialUI = createContext();
+
 
 // Setting custom name for the context which is visible on react dev tools
+
+export const ROLE = {
+  ADMIN: 'admin',
+  STAFF: 'staff',
+  USER: 'user',
+
+};
+const initValue = {
+  _id: '',
+  name: '',
+  email: '',
+  fullName: '',
+  phone: '',
+  username: '',
+  role: ROLE.ADMIN
+};
+export const MaterialUI = createContext({
+  user: initValue,
+  isLogin: false,
+  loadUserInfo: () => { },
+  resetUserInfo: () => { },
+  setUserInfor: () => { },
+  loadToken: () => { },
+  setToken: () => { }
+});
 MaterialUI.displayName = "MaterialUIContext";
 
 // Material Dashboard 2 React reducer
@@ -62,6 +95,26 @@ function reducer(state, action) {
     case "DARKMODE": {
       return { ...state, darkMode: action.value };
     }
+    case "USERINFO": {
+      return {
+        ...state, user: action.value
+      };
+    }
+    case "TOKEN": {
+      return {
+        ...state, token: action.value
+      };
+    }
+    case "SHOW_LOADING": {
+      return {
+        ...state, loading: true
+      };
+    }
+    case "HIDE_LOADING": {
+      return {
+        ...state, loading: false
+      };
+    }
     default: {
       throw new Error(`Unhandled action type: ${action.type}`);
     }
@@ -81,6 +134,9 @@ function MaterialUIControllerProvider({ children }) {
     direction: "ltr",
     layout: "dashboard",
     darkMode: false,
+    user: localStorageHelper.load('user-info') ?? initValue,
+    token: localStorageHelper.load('token') ?? undefined,
+    loading : true
   };
 
   const [controller, dispatch] = useReducer(reducer, initialState);
@@ -119,7 +175,10 @@ const setOpenConfigurator = (dispatch, value) => dispatch({ type: "OPEN_CONFIGUR
 const setDirection = (dispatch, value) => dispatch({ type: "DIRECTION", value });
 const setLayout = (dispatch, value) => dispatch({ type: "LAYOUT", value });
 const setDarkMode = (dispatch, value) => dispatch({ type: "DARKMODE", value });
-
+const setUserInfor = (dispatch, value) => dispatch({ type: "USERINFO", value });
+const setToken = (dispatch, value) => dispatch({ type: "TOKEN", value });
+const setLoading = (dispatch, value) => dispatch({ type: "SHOW_LOADING", value });
+const setHideLoading = (dispatch, value) => dispatch({ type: "HIDE_LOADING", value });
 export {
   MaterialUIControllerProvider,
   useMaterialUIController,
@@ -133,4 +192,8 @@ export {
   setDirection,
   setLayout,
   setDarkMode,
+  setUserInfor,
+  setToken,
+  setLoading,
+  setHideLoading
 };

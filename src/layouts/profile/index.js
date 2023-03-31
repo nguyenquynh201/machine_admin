@@ -1,3 +1,5 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable no-unused-vars */
 /**
 =========================================================
 * Material Dashboard 2 React - v2.1.0
@@ -41,6 +43,7 @@ import PlatformSettings from "layouts/profile/components/PlatformSettings";
 // Data
 import profilesListData from "layouts/profile/data/profilesListData";
 
+import { useEffect } from "react";
 // Images
 import homeDecor1 from "assets/images/home-decor-1.jpg";
 import homeDecor2 from "assets/images/home-decor-2.jpg";
@@ -50,13 +53,23 @@ import team1 from "assets/images/team-1.jpg";
 import team2 from "assets/images/team-2.jpg";
 import team3 from "assets/images/team-3.jpg";
 import team4 from "assets/images/team-4.jpg";
+import { useMaterialUIController, setMiniSidenav, setOpenConfigurator, MaterialUIControllerProvider } from "context";
 
 function Overview() {
+  const [controller, dispatch] = useMaterialUIController();
+  const {
+    user,
+    token,
+  } = controller;
+
+  useEffect(() => {
+    console.log("user", user);
+  }, [])
   return (
     <DashboardLayout>
       <DashboardNavbar />
       <MDBox mb={2} />
-      <Header>
+      <Header user={user}>
         <MDBox mt={5} mb={3}>
           <Grid container spacing={1}>
             <Grid item xs={12} md={6} xl={4}>

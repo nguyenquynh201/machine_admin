@@ -1,3 +1,4 @@
+/* eslint-disable react/default-props-match-prop-types */
 /**
 =========================================================
 * Material Dashboard 2 React - v2.1.0

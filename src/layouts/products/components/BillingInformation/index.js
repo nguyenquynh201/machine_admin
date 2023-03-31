@@ -1,3 +1,7 @@
+/* eslint-disable react/no-array-index-key */
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-useless-rename */
+/* eslint-disable react/prop-types */
 /* eslint-disable no-useless-concat */
 /* eslint-disable prefer-template */
 /* eslint-disable no-console */
@@ -26,10 +30,13 @@ import MDTypography from "components/MDTypography";
 
 // Billing page components
 import Bill from "layouts/products/components/Bill";
+import PropTypes from "prop-types";
+import { useEffect } from "react";
 
-
-function BillingInformation() {
- 
+function BillingInformation({ products }) {
+  useEffect(() => {
+    console.log("nè nè sp", products);
+  }, [])
   return (
     <Card id="delete-account">
       <MDBox pt={3} px={2}>
@@ -39,48 +46,19 @@ function BillingInformation() {
       </MDBox>
       <MDBox pt={1} pb={2} px={2}>
         <MDBox component="ul" display="flex" flexDirection="column" p={0} m={0}>
-          <Bill
-            name="oliver liam"
-            company="viking burrito"
-            email="oliver@burrito.com"
-            vat="FRB1235476"
-          />
-          <Bill
-            name="lucas harper"
-            company="stone tech zone"
-            email="lucas@stone-tech.com"
-            vat="FRB1235476"
-          />
-          <Bill
-            name="ethan james"
-            company="fiber notion"
-            email="ethan@fiber.com"
-            vat="FRB1235476"
-            noGutter
-          />
-          <Bill
-            name="oliver liam"
-            company="viking burrito"
-            email="oliver@burrito.com"
-            vat="FRB1235476"
-          />
-          <Bill
-            name="lucas harper"
-            company="stone tech zone"
-            email="lucas@stone-tech.com"
-            vat="FRB1235476"
-          />
-          <Bill
-            name="ethan james"
-            company="fiber notion"
-            email="ethan@fiber.com"
-            vat="FRB1235476"
-            noGutter
-          />
+          {products.map((product, i) => <Bill key={i}
+            product={product}
+          />)}
         </MDBox>
       </MDBox>
     </Card>
   );
 }
+// Setting default props for the Header
+BillingInformation.defaultProps = {
+  products: [],
+};
+
+// Typechecking props for the Header
 
 export default BillingInformation;

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-console */
 /* eslint-disable no-useless-concat */
 /* eslint-disable prettier/prettier */
@@ -39,22 +40,26 @@ import Footer from "examples/Footer";
 import BillingInformation from "layouts/products/components/BillingInformation";
 // import Transactions from "layouts/products/components/Transactions";
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import productAPI from "data/api/products/productAPI";
+import { useMaterialUIController, setLoading, setHideLoading } from "context";
+import { Link, Routes, useNavigate } from "react-router-dom";
+
 
 function Products() {
   const [products, setProducts] = useState([]);
+  const navigate = useNavigate();
+  const [controller, dispatch] = useMaterialUIController();
+  const {
+    token,
+  } = controller;
   useEffect(async () => {
+    console.log("token", token);
+    setLoading(dispatch, true);
+    const data = await productAPI.getProduct(token.accessToken);
+    console.log("data", data);
+    setProducts(data);
+    setHideLoading(dispatch, false);
 
-    await axios.get('http://localhost:3000/products', {
-      headers: {
-        Authorization: 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0MDc2M2RiOGQ3OWU2MTExYzUyNzYxMSIsInVzZXIiOiJhZG1pbiIsInJvbGUiOiJhZG1pbiIsImlzcyI6ImNvbnRhaW5lciIsImlhdCI6MTY3OTQ4NTA2NywiZXhwIjoxNjc5NDkyMjY3fQ.MzJKs16XxBODr849_LKJolCBvK07eQmEYrUosOMrbP4'// token ở đây là access token của bạn
-      }
-    })
-      .then(response => {
-        setProducts(response.data);
-        console.log(products);
-      })
-      .catch(error => console.log(error));
   }, []);
 
   return (
@@ -66,14 +71,15 @@ function Products() {
             <MDTypography variant="h6" fontWeight="medium">
               Quản lý sản phẩm
             </MDTypography>
-            <MDButton variant="gradient" color="dark">
+            <MDButton variant="gradient" color="dark" component={Link}
+              to="/products/create-product">
               <Icon sx={{ fontWeight: "bold" }}>add</Icon>
               &nbsp;Thêm mới sản phẩm
             </MDButton>
           </MDBox>
         </MDBox>
         <MDBox mb={3}>
-          <BillingInformation />
+          <BillingInformation products={products} />
         </MDBox>
       </MDBox>
       <Footer />

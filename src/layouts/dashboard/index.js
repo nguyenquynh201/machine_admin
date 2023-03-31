@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable prettier/prettier */
 /**
 =========================================================
 * Material Dashboard 2 React - v2.1.0
@@ -30,14 +32,23 @@ import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatist
 // Data
 import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
 import reportsLineChartData from "layouts/dashboard/data/reportsLineChartData";
-
+import { useEffect } from "react";
 // Dashboard components
 import Projects from "layouts/dashboard/components/Projects";
 import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
+import { useMaterialUIController, setMiniSidenav, setOpenConfigurator, MaterialUIControllerProvider } from "context";
 
 function Dashboard() {
   const { sales, tasks } = reportsLineChartData;
+  const [controller, dispatch] = useMaterialUIController();
+  const {
+    user,
+    token,
+  } = controller;
 
+  useEffect(() => {
+    console.log("user", user);
+  }, [])
   return (
     <DashboardLayout>
       <DashboardNavbar />

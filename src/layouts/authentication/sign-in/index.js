@@ -1,3 +1,12 @@
+/* eslint-disable no-empty */
+/* eslint-disable react/jsx-curly-brace-presence */
+/* eslint-disable react/jsx-no-undef */
+/* eslint-disable no-console */
+/* eslint-disable react/self-closing-comp */
+/* eslint-disable no-undef */
+/* eslint-disable react/prop-types */
+/* eslint-disable prettier/prettier */
+/* eslint-disable no-unused-vars */
 /**
 =========================================================
 * Material Dashboard 2 React - v2.1.0
@@ -13,10 +22,10 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
 
 // react-router-dom components
-import { Link } from "react-router-dom";
+import { Link, Routes, useNavigate } from "react-router-dom";
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -37,14 +46,60 @@ import MDButton from "components/MDButton";
 
 // Authentication layout components
 import BasicLayout from "layouts/authentication/components/BasicLayout";
-
+import { useAlert } from 'react-alert'
 // Images
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 
-function Basic() {
-  const [rememberMe, setRememberMe] = useState(false);
+import authAPI from "data/api/auth/authAPI";
+import userAPI from "data/api/users/userAPI";
+import { localStorageHelper } from "data/useToken";
 
+import { useMaterialUIController, setUserInfor, setToken, setLoading, setHideLoading } from "context";
+
+function Basic() {
+  const [controller, dispatch] = useMaterialUIController();
+  const {
+    user,
+    token,
+    loading
+  } = controller;
+  const [rememberMe, setRememberMe] = useState(false);
+  const [username, setUserName] = useState();
+  const [password, setPassword] = useState();
+  const [accessToken, setAccessToken] = useState();
+  const [success, setSuccess] = useState(false);
+  const navigate = useNavigate();
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
+  const alert = useAlert()
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+    // console.log(setUserInfor);
+    // console.log(password); 
+    try {
+      setLoading(dispatch, loading);
+      const data = await authAPI.loginUser(JSON.stringify({ username, password }));
+      console.log(data.status);
+      if (data.status !== 404) {
+        const userData = await userAPI.getProfile(data.data.accessToken);
+        setAccessToken(data.data.accessToken);
+        setToken(dispatch, data.data);
+        setUserInfor(dispatch, userData.data);
+        localStorageHelper.store('user-info', userData.data);
+        localStorageHelper.store('token', data.data);
+        setSuccess(true);
+        setHideLoading(dispatch, loading);
+        alert.show('Đăng nhập thành công!!!');
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      setHideLoading(dispatch, loading);
+      alert.show("Đăng nhập không thành công !!!!");
+      console.log(error);
+    }
+
+
+  }
 
   return (
     <BasicLayout image={bgImage}>
@@ -84,10 +139,16 @@ function Basic() {
         <MDBox pt={4} pb={3} px={3}>
           <MDBox component="form" role="form">
             <MDBox mb={2}>
-              <MDInput type="email" label="Email" fullWidth />
+              <MDInput type="text" label="Username" onChange={(event) => {
+                setUserName(event.target.value);
+                console.log(event.target.value);
+              }} fullWidth />
             </MDBox>
             <MDBox mb={2}>
-              <MDInput type="password" label="Password" fullWidth />
+              <MDInput type="password" label="Password" onChange={(event) => {
+                setPassword(event.target.value);
+                console.log(event.target.value);
+              }} fullWidth />
             </MDBox>
             <MDBox display="flex" alignItems="center" ml={-1}>
               <Switch checked={rememberMe} onChange={handleSetRememberMe} />
@@ -102,7 +163,7 @@ function Basic() {
               </MDTypography>
             </MDBox>
             <MDBox mt={4} mb={1}>
-              <MDButton variant="gradient" color="info" fullWidth>
+              <MDButton variant="gradient" color="info" onClick={handleSubmit} fullWidth>
                 sign in
               </MDButton>
             </MDBox>

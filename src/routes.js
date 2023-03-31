@@ -1,3 +1,5 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable no-unused-vars */
 /**
 =========================================================
 * Material Dashboard 2 React - v2.1.0
@@ -46,8 +48,13 @@ import SignUp from "layouts/authentication/sign-up";
 import Staffs from "layouts/staffs";
 import Products from "layouts/products";
 import MaintenanceSchedule from "layouts/maintenance_schedule";
+import AddProduct from "layouts/products/components/AddProduct";
+import DetailProduct from "layouts/products/components/Detail";
 // @mui icons
 import Icon from "@mui/material/Icon";
+
+
+
 
 const routes = [
   {
@@ -123,12 +130,28 @@ const routes = [
     component: <SignIn />,
   },
   {
-    type: "collapse",
+    type: "none",
     name: "Sign Up",
     key: "sign-up",
     icon: <Icon fontSize="small">assignment</Icon>,
     route: "/authentication/sign-up",
     component: <SignUp />,
+  },
+  {
+    type: "page",
+    name: "Create Product",
+    key: "create-product",
+    icon: <Icon fontSize="small">product</Icon>,
+    route: "/products/create-product",
+    component: <AddProduct />,
+  },
+  {
+    type: "page",
+    name: "Detail Product",
+    key: "detail-product",
+    icon: <Icon fontSize="small">product</Icon>,
+    route: "/products/detail-product",
+    component: <DetailProduct />,
   },
 ];
 

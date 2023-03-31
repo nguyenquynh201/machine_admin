@@ -1,3 +1,7 @@
+/* eslint-disable no-console */
+/* eslint-disable eqeqeq */
+/* eslint-disable prettier/prettier */
+/* eslint-disable no-unused-vars */
 /**
 =========================================================
 * Material Dashboard 2 React - v2.1.0
@@ -13,7 +17,7 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 
 // react-router components
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
@@ -41,26 +45,31 @@ import themeDark from "assets/theme-dark";
 import routes from "routes";
 
 // Material Dashboard 2 React contexts
-import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "context";
+import { useMaterialUIController, setMiniSidenav, setOpenConfigurator, setHideLoading, setLoading } from "context";
+import { localStorageHelper } from "data/useToken";
 
 // Images
 import brandWhite from "assets/images/logo-ct.png";
 import brandDark from "assets/images/logo-ct-dark.png";
 
+import authAPI from "data/api/auth/authAPI";
+import Loading from "examples/Loading";
+
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
   const {
     miniSidenav,
-    direction,
     layout,
     openConfigurator,
     sidenavColor,
     transparentSidenav,
     whiteSidenav,
     darkMode,
+    token,
   } = controller;
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const { pathname } = useLocation();
+
 
   // Cache for the rtl
 
@@ -79,14 +88,25 @@ export default function App() {
       setOnMouseEnter(false);
     }
   };
-
+  let tokens;
+  const [success, setSuccess] = useState(false);
   // Change the openConfigurator state
   const handleConfiguratorOpen = () => setOpenConfigurator(dispatch, !openConfigurator);
 
   // Setting the dir attribute for the body element
-  useEffect(() => {
-    document.body.setAttribute("dir", direction);
-  }, [direction]);
+  useEffect(async () => {
+    tokens = localStorageHelper.load('token') ?? undefined;
+    if (tokens != undefined) {
+      setLoading(dispatch, true);
+      setSuccess(true);
+      await authAPI.refreshAccessToken(tokens);
+      setHideLoading(dispatch, false);
+      console.log("nè nè ", success);
+    }
+    console.log("nè nè ", tokens);
+    console.log("nè  ", token);
+
+  }, [tokens, success]);
 
   // Setting page scroll to 0 when changing the route
   useEffect(() => {
@@ -99,6 +119,7 @@ export default function App() {
       if (route.collapse) {
         return getRoutes(route.collapse);
       }
+
 
       if (route.route) {
         return <Route exact path={route.route} element={route.component} key={route.key} />;
@@ -131,6 +152,7 @@ export default function App() {
     </MDBox>
   );
 
+
   return (
     <ThemeProvider theme={darkMode ? themeDark : theme}>
       <CssBaseline />
@@ -149,9 +171,10 @@ export default function App() {
         </>
       )}
       {layout === "vr" && <Configurator />}
+      <Loading />
       <Routes>
         {getRoutes(routes)}
-        <Route path="*" element={<Navigate to="/dashboard" />} />
+        <Route path="*" element={<Navigate to={tokens != undefined ? "/dashboard" : "/authentication/sign-in"} />} />
       </Routes>
     </ThemeProvider>
   );
