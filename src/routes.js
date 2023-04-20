@@ -50,6 +50,7 @@ import Products from "layouts/products";
 import MaintenanceSchedule from "layouts/maintenance_schedule";
 import AddProduct from "layouts/products/components/AddProduct";
 import DetailProduct from "layouts/products/components/Detail";
+import EditProduct from "layouts/products/components/EditProduct";
 // @mui icons
 import Icon from "@mui/material/Icon";
 
@@ -152,6 +153,14 @@ const routes = [
     icon: <Icon fontSize="small">product</Icon>,
     route: "/products/detail-product",
     component: <DetailProduct />,
+  },
+  {
+    type: "page",
+    name: "edit Product",
+    key: "edit-product",
+    icon: <Icon fontSize="small">product</Icon>,
+    route: "/products/edit-product",
+    component: <EditProduct />,
   },
 ];
 

@@ -1,3 +1,7 @@
+/* eslint-disable no-nested-ternary */
+/* eslint-disable no-empty */
+/* eslint-disable react/self-closing-comp */
+/* eslint-disable no-empty-function */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-console */
 /* eslint-disable no-useless-concat */
@@ -42,12 +46,15 @@ import BillingInformation from "layouts/products/components/BillingInformation";
 import React, { useState, useEffect } from 'react';
 import productAPI from "data/api/products/productAPI";
 import { useMaterialUIController, setLoading, setHideLoading } from "context";
-import { Link, Routes, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 
 function Products() {
   const [products, setProducts] = useState([]);
-  const navigate = useNavigate();
+  const [isLoadMore, setLoadMore] = useState(false);
+  const [hasReachEnd, setHasReachEnd] = useState(false);
+  const [total, setTotal] = useState(0);
+  const [offset, setOffset] = useState(0);
   const [controller, dispatch] = useMaterialUIController();
   const {
     token,
@@ -55,16 +62,45 @@ function Products() {
   useEffect(async () => {
     console.log("token", token);
     setLoading(dispatch, true);
-    const data = await productAPI.getProduct(token.accessToken);
-    console.log("data", data);
-    setProducts(data);
-    setHideLoading(dispatch, false);
+    try {
+      await productAPI.getProduct({ "offset": offset === undefined ? 0 : offset, "limit": 15 }).then((data) => {
+        console.log("data", data);
+        setTotal(data.data.total);
+        setOffset(data.data.length);
+        setProducts(data.data.data);
+        setHideLoading(dispatch, false);
+      });
+    } catch (error) {
+      setHideLoading(dispatch, false);
+
+    }
+
 
   }, []);
+  async function loadMoreProduct() {
+    setLoadMore(true);
+    const productList = [...products];
+    console.log("nè nè ", productList);
+    try {
+      await productAPI.getProduct({ "offset": products.length, "limit": 15 }).then((value) => {
+        productList.push(...value.data.data)
+        console.log("nè nè nè ", productList);
+        setProducts(productList);
 
+        setTotal(value.data.total);
+        if (value.data.total >= products.length) {
+          setHasReachEnd(true);
+        }
+        setLoadMore(false);
+      });
+    } catch (error) {
+      setLoadMore(false);
+    }
+
+  }
   return (
     <DashboardLayout>
-      <DashboardNavbar absolute isMini />
+      <DashboardNavbar isMini />
       <MDBox mt={8}>
         <MDBox mb={3}>
           <MDBox pt={2} px={2} display="flex" justifyContent="space-between" alignItems="center">
@@ -80,6 +116,12 @@ function Products() {
         </MDBox>
         <MDBox mb={3}>
           <BillingInformation products={products} />
+          {total > products.length ? <MDBox mb={1} mt={1} alignContent="center" justifyContent="center" display="flex">
+            <MDButton variant="gradient" color="dark"
+              onClick={() => loadMoreProduct()}>
+              &nbsp;Hiển thị thêm
+            </MDButton>
+          </MDBox> : <MDBox></MDBox>}
         </MDBox>
       </MDBox>
       <Footer />

@@ -13,18 +13,19 @@ import constant from 'constants/constant';
 import { localStorageHelper } from 'data/useToken';
 
 async function getProduct(param) {
+    const url = `${constant.PRODUCT}?limit=${param.limit}&offset=${param.offset}`;
     let token = localStorageHelper.load('token') ?? undefined;
     if (token != undefined) {
-        const data = await axios.get(constant.PRODUCT, {
+        const data = await axios.get(url, {
             headers: {
-                Authorization: 'Bearer ' + param
+                Authorization: 'Bearer ' + token.accessToken
             }
         })
             .then(response => {
-                return response.data;
+                return response;
             })
             .catch(error => console.log(error));
-        return data.data;
+        return data;
     } else {
         return null;
     }

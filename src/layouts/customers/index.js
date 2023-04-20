@@ -1,3 +1,6 @@
+/* eslint-disable react/self-closing-comp */
+/* eslint-disable prettier/prettier */
+/* eslint-disable no-unused-vars */
 /**
 =========================================================
 * Material Dashboard 2 React - v2.1.0
@@ -20,6 +23,9 @@ import Card from "@mui/material/Card";
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
+import MDButton from "components/MDButton";
+import Icon from "@mui/material/Icon";
+import { Link, Routes, useNavigate } from "react-router-dom";
 
 // Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -38,7 +44,18 @@ function Customers() {
   return (
     <DashboardLayout>
       <DashboardNavbar />
-      <MDBox pt={6} pb={3}>
+      <MDBox pt={2} px={2} display="flex" justifyContent="space-between" alignItems="center">
+        <MDTypography variant="h6" fontWeight="medium">
+          Danh sách khách hàng
+        </MDTypography>
+        <MDButton variant="gradient" color="dark" component={Link}
+          to="/products/create-product">
+          <Icon sx={{ fontWeight: "bold" }}>add</Icon>
+          &nbsp;Thêm khách hàng mới
+        </MDButton>
+      </MDBox>
+      <MDBox height="100%" display="flex"></MDBox>
+      {/* <MDBox pt={6} pb={3}>
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <Card>
@@ -95,7 +112,7 @@ function Customers() {
             </Card>
           </Grid>
         </Grid>
-      </MDBox>
+      </MDBox> */}
       <Footer />
     </DashboardLayout>
   );

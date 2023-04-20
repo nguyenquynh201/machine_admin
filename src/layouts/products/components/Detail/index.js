@@ -50,18 +50,21 @@ import parse from 'html-react-parser';
 import { BASE_URL } from "config";
 import CardMedia from "@mui/material/CardMedia";
 import ClipLoader from "react-spinners/ClipLoader";
-
+import { useMaterialUIController, setLoading, setHideLoading } from "context";
 
 function DetailProduct() {
-
+    const [controller, dispatch] = useMaterialUIController();
+    const {
+        loading
+    } = controller;
     const location = useLocation();
     const [product, setProduct] = useState();
-    const [loading, setLoading] = useState(true);
 
     useEffect(async () => {
+        setLoading(dispatch, true)
         setProduct(location.state);
         setTimeout(() => {
-            setLoading(false);
+            setHideLoading(dispatch, false)
         }, 2000);
         console.log("product ", product);
         // getProductById(location.state._id);
@@ -136,21 +139,25 @@ function DetailProduct() {
                                                 <MDTypography variant="h4" fontWeight="medium" mb={1}>
                                                     Hình ảnh
                                                 </MDTypography>
-                                                {product?.imageMachine.map((item, index) => <CardMedia
-                                                    src={BASE_URL + "/" + item.url}
-                                                    component="img"
-                                                    crossOrigin="anonymous"
-                                                    display="flex"
-                                                    key={index}
-                                                    height={300}
-                                                    sx={{
-                                                        maxWidth: "80%",
-                                                        margin: 0,
-                                                        boxShadow: ({ boxShadows: { md } }) => md,
-                                                        objectFit: "cover",
-                                                        objectPosition: "center",
-                                                    }}
-                                                />)}
+                                                <Grid container spacing={6}>
+                                                    {product?.imageMachine.map((item, index) => <CardMedia
+                                                        src={BASE_URL + "/" + item.url}
+                                                        component="img"
+                                                        crossOrigin="anonymous"
+                                                        display="flex"
+                                                        key={index}
+                                                        height={300}
+
+                                                        sx={{
+                                                            maxWidth: "80%",
+                                                            margin: 6,
+                                                            boxShadow: ({ boxShadows: { md } }) => md,
+                                                            objectFit: "cover",
+                                                            objectPosition: "center",
+                                                        }}
+                                                    />)}
+                                                </Grid>
+
                                             </MDBox>
                                     }
 
@@ -165,13 +172,6 @@ function DetailProduct() {
                         mb={100}
                         mt={8}
                         textAlign="center">
-                        <ClipLoader
-                            color={'red'}
-                            loading={loading}
-                            size={150}
-                            aria-label="Loading Spinner"
-                            data-testid="loader"
-                        />
                     </MDBox>
                 }
             </MDBox>

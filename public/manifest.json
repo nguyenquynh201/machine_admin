@@ -1,9 +1,9 @@
 {
-  "short_name": "Material Dashboard",
-  "name": "Material Dashboard 2 React",
+  "short_name": "Machine Care",
+  "name": "Machine Care",
   "icons": [
     {
-      "src": "favicon.png",
+      "src": "icon-app.png",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/png"
     }
